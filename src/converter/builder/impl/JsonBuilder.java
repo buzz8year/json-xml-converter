@@ -1,27 +1,33 @@
-package converter.builder;
+package converter.builder.impl;
 
-import converter.Node;
+import converter.builder.Builder;
+import converter.node.Node;
 
-public class JsonBuilder extends Builder {
-    public void buildTree() {
+public class JsonBuilder extends Builder
+{
+    public void buildTree()
+    {
         for (var node : this.tree)
             this.result += this.embraceJson(this.build(node));
 
         this.result = this.trimExcessiveCommas(this.result);
     }
 
-    public String build(Node node) {
+    public String build(Node node)
+    {
         StringBuilder s = new StringBuilder();
 
         if (node.parent == null || !node.parent.isArray)
             s.append(String.format("\"%s\": ", node.name));
 
-        if (node.attributes.isEmpty() && node.children.isEmpty()) {
+        if (node.attributes.isEmpty() && node.children.isEmpty())
+        {
             if (node.value == null || node.value.equals("null")) s.append("null, ");
             else s.append(String.format("\"%s\", ", node.value));
         }
 
-        if (!node.attributes.isEmpty() && node.children.isEmpty()) {
+        if (!node.attributes.isEmpty() && node.children.isEmpty())
+        {
             appendObjectOpen(s);
             s.append(attributesToJson(node));
             if (node.value == null || node.value.equals("null"))
@@ -29,7 +35,8 @@ public class JsonBuilder extends Builder {
             else s.append(String.format("\"#%s\": \"%s\"", node.name, node.value));
             appendObjectClose(s);
         }
-        else if (!node.attributes.isEmpty()) {
+        else if (!node.attributes.isEmpty())
+        {
             appendObjectOpen(s);
             s.append(attributesToJson(node));
             s.append(String.format("\"#%s\":", node.name));
@@ -42,31 +49,39 @@ public class JsonBuilder extends Builder {
         return s.toString();
     }
 
-    public String attributesToJson(Node node) {
+    public String attributesToJson(Node node)
+    {
         StringBuilder s = new StringBuilder();
 
-        for (var pair : node.attributes.entrySet()) {
+        for (var pair : node.attributes.entrySet())
+        {
             if (pair.getValue() == null || pair.getValue().equals("null"))
                 s.append(String.format("\"@%s\": null, ", pair.getKey()));
+
             else s.append(String.format("\"@%s\": \"%s\", ", pair.getKey(), pair.getValue()));
         }
         return s.toString();
     }
 
-    public void appendChildren(Node node, StringBuilder s) {
+    public void appendChildren(Node node, StringBuilder s)
+    {
         appendConditionalOpen(node, s);
         for (Node child : node.children)
             s.append(this.build(child));
         appendConditionalClose(node, s);
     }
 
-    public void appendConditionalOpen(Node node, StringBuilder s) {
-        if (node.isArray) appendArrayOpen(s);
+    public void appendConditionalOpen(Node node, StringBuilder s)
+    {
+        if (node.isArray)
+            appendArrayOpen(s);
         else appendObjectOpen(s);
     }
 
-    public void appendConditionalClose(Node node, StringBuilder s) {
-        if (node.isArray) appendArrayClose(s);
+    public void appendConditionalClose(Node node, StringBuilder s)
+    {
+        if (node.isArray)
+            appendArrayClose(s);
         else appendObjectClose(s);
     }
 

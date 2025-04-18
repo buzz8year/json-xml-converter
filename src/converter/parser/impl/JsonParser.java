@@ -1,24 +1,30 @@
-package converter.parser;
+package converter.parser.impl;
 
-import converter.Node;
+import converter.node.Node;
+import converter.parser.Parser;
+
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class JsonParser extends Parser {
+public class JsonParser extends Parser
+{
     public List<Node> heap = new LinkedList<>();
 
-    public void payloadToNodes() {
-        for (var s : this.splitPayload(this.payload)) {
-
+    public void payloadToNodes()
+    {
+        for (var s : this.splitPayload(this.payload))
+        {
             if (isOpening(s)) this.processParent(s);
             else if (isPair(s)) this.processPair(s);
             else if (s.isBlank()) this.processEmpty();
             else if (isClosing(s)) parents.pop();
             else this.processSingle(s);
         }
-        for (Node node : this.heap) {
+
+        for (Node node : this.heap)
+        {
             this.determineNodeUnity(node);
             if (node.isUnified)
                 this.childrenToAttributes(node);
@@ -26,12 +32,14 @@ public class JsonParser extends Parser {
         this.processMisfits();
     }
 
-    public void processEmpty() {
+    public void processEmpty()
+    {
         if (!parents.isEmpty())
             parents.peek().value = "";
     }
 
-    public void processParent(String s) {
+    public void processParent(String s)
+    {
         Node node = new Node(s);
         node.name = s.split(":")[0].replaceAll("\"", "").trim();
         node.value = "no-show";
@@ -50,7 +58,8 @@ public class JsonParser extends Parser {
         this.heap.add(node);
     }
 
-    public void processPair(String s) {
+    public void processPair(String s)
+    {
         Node parent = parents.peek();
         String[] pair = s.split(":");
 
@@ -58,11 +67,13 @@ public class JsonParser extends Parser {
         node.name = this.trimQuotes(pair[0]);
         node.value = this.trimQuotes(pair[1]);
 
-        if (parent != null) {
+        if (parent != null)
+        {
             String name = node.name.replaceAll("[#@]", "");
 
             Iterator<Node> iterator = parent.children.iterator();
-            while (iterator.hasNext()) {
+            while (iterator.hasNext())
+            {
                 String compare = iterator.next().name.replaceAll("[#@]", "");
                 if (name.equals(compare)) iterator.remove();
             }
@@ -71,28 +82,34 @@ public class JsonParser extends Parser {
         }
     }
 
-    public void processSingle(String s) {
+    public void processSingle(String s)
+    {
         Node node = new Node(s);
         node.value = s.trim();
         node.name = "element";
 
         Node parent = parents.peek();
-        if (parent != null) {
+        if (parent != null)
+        {
             parent.children.add(node);
             node.parent = parent;
         }
     }
 
-    public void determineNodeUnity(Node node) {
-        for (Node child : node.children) {
+    public void determineNodeUnity(Node node)
+    {
+        for (Node child : node.children)
+        {
             if (node.children.size() < 2 && !child.name.startsWith("#"))
                 node.isUnified = false;
 
-            if (child.name.startsWith("#")) {
+            if (child.name.startsWith("#"))
+            {
                 String compare = child.name.replaceFirst("#", "");
                 if (!node.name.equals(compare)) node.isUnified = false;
             }
-            else if (child.name.startsWith("@")) {
+            else if (child.name.startsWith("@"))
+            {
                 if (child.name.length() < 2 || !child.children.isEmpty())
                     node.isUnified = false;
             }
@@ -100,39 +117,47 @@ public class JsonParser extends Parser {
         }
     }
 
-    public void childrenToAttributes(Node node) {
+    public void childrenToAttributes(Node node)
+    {
         Iterator<Node> iterator = node.children.iterator();
 
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             Node child = iterator.next();
 
-            if (child.name.startsWith("#")) {
-                if (child.children.isEmpty()) {
+            if (child.name.startsWith("#"))
+            {
+                if (child.children.isEmpty())
+                {
                     node.value = child.value;
                     iterator.remove();
                 }
                 else substituteNode(node, child);
             }
-            else if (child.name.startsWith("@")) {
+            else if (child.name.startsWith("@"))
+            {
                 childToAttribute(node, child);
                 iterator.remove();
             }
         }
     }
 
-    public void childToAttribute(Node parent, Node child) {
+    public void childToAttribute(Node parent, Node child)
+    {
         String name = child.name.replaceFirst("@", "");
         parent.attributes.put(name, child.value);
     }
 
-    public void substituteNode(Node parent, Node child) {
+    public void substituteNode(Node parent, Node child)
+    {
         child.attributes = parent.attributes;
         child.parent = parent.parent;
         int i = parent.parent.children.indexOf(parent);
         parent.parent.children.set(i, child);
     }
 
-    public void processMisfits() {
+    public void processMisfits()
+    {
         Iterator<Node> iterator = this.heap.iterator();
 
         while (iterator.hasNext()) {
@@ -142,19 +167,23 @@ public class JsonParser extends Parser {
         }
     }
 
-    public void processChildMisfits(Node node) {
+    public void processChildMisfits(Node node)
+    {
         List<String> list = new ArrayList<>();
         Iterator<Node> iterator = node.children.iterator();
 
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             Node child = iterator.next();
 
-            if (child.name.contains("@")) {
+            if (child.name.contains("@"))
+            {
                 String name = child.name.replaceFirst("@", "");
                 if (list.contains(name)) iterator.remove();
             }
 
-            if (child.name.length() < 2) iterator.remove();
+            if (child.name.length() < 2)
+                iterator.remove();
             else child.name = child.name.replaceFirst("[@#]", "");
 
             list.add(child.name);

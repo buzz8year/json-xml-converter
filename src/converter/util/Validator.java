@@ -1,8 +1,10 @@
-package converter;
+package converter.util;
 
 import java.util.regex.Pattern;
 
-class Recognizer {
+// TODO: Implement methods properly.
+public class Validator
+{
     public static boolean isXml(String s) {
         return Pattern.compile("[</>]+").matcher(s).find();
     }

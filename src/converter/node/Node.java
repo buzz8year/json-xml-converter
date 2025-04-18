@@ -1,11 +1,12 @@
-package converter;
+package converter.node;
 
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Node {
+public class Node
+{
     public Map<String, String> attributes = new LinkedHashMap<>();
     public List<Node> children = new ArrayList<>();
     public Node parent;

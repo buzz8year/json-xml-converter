@@ -1,24 +1,27 @@
-package converter;
+package converter.converter;
 
+import converter.util.Validator;
 import converter.parser.Parser;
-import converter.parser.JsonParser;
-import converter.parser.XmlParser;
+import converter.parser.impl.JsonParser;
+import converter.parser.impl.XmlParser;
 
 import converter.builder.Builder;
-import converter.builder.JsonBuilder;
-import converter.builder.XmlBuilder;
+import converter.builder.impl.JsonBuilder;
+import converter.builder.impl.XmlBuilder;
 
-public class Converter {
+public class Converter implements ConvertStrategy
+{
     public String payload, result;
     public Builder builder;
     public Parser parser;
 
-    public void convert() {
-        if (Recognizer.isXml(payload)) {
+    public void convert()
+    {
+        if (Validator.isXml(payload)) {
             parser = new XmlParser();
             builder = new JsonBuilder();
         }
-        else if (Recognizer.isJson(payload)) {
+        else if (Validator.isJson(payload)) {
             parser = new JsonParser();
             builder = new XmlBuilder();
         }
