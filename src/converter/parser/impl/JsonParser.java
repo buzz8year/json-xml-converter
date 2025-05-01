@@ -210,7 +210,7 @@ public class JsonParser extends Parser
         return s.trim().replaceAll("\"", "");
     }
 
-    public String[] splitPayload(String s) {
-        return this.trimPayload(s).split(",|(?<=[{\\[])|(?=[]}])");
+    public String[] splitPayload(String payload) {
+        return this.trimPayload(payload).split(",|(?<=[{\\[])|(?=[]}])");
     }
 }

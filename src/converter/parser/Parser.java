@@ -9,10 +9,18 @@ import java.util.List;
 
 public abstract class Parser
 {
-    public String payload;
-    public List<Node> tree = new LinkedList<>();
-    public Deque<Node> parents = new ArrayDeque<>();
+    protected String payload;
+    protected List<Node> tree = new LinkedList<>();
+    protected Deque<Node> parents = new ArrayDeque<>();
 
-    abstract public String[] splitPayload(String s);
+    abstract public String[] splitPayload(String payload);
     abstract public void payloadToNodes();
+
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
+
+    public List<Node> getTree() {
+        return tree;
+    }
 }

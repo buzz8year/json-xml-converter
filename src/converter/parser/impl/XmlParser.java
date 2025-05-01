@@ -94,9 +94,9 @@ public class XmlParser extends Parser
         node.children.forEach(this::checkForArray);
     }
 
-    public String[] splitPayload(String s)
+    public String[] splitPayload(String payload)
     {
-        return s.replaceFirst("<\\?.*\\?>", "").split("(?<=>)|(?=<)");
+        return payload.replaceFirst("<\\?.*\\?>", "").split("(?<=>)|(?=<)");
     }
 
 }

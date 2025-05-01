@@ -1,46 +1,33 @@
 package converter.converter;
 
-import converter.util.Validator;
-import converter.parser.Parser;
-import converter.parser.impl.JsonParser;
-import converter.parser.impl.XmlParser;
-
+import converter.builder.BuilderFactory;
+import converter.parser.ParserFactory;
 import converter.builder.Builder;
-import converter.builder.impl.JsonBuilder;
-import converter.builder.impl.XmlBuilder;
+import converter.parser.Parser;
 
 public class Converter implements ConvertStrategy
 {
-    public String payload, result;
-    public Builder builder;
-    public Parser parser;
+    private final ParserFactory parserFactory;
+    private final BuilderFactory builderFactory;
 
-    public void convert()
+    public Converter(ParserFactory parserFactory, BuilderFactory builderFactory)
     {
-        if (Validator.isXml(payload)) {
-            parser = new XmlParser();
-            builder = new JsonBuilder();
-        }
-        else if (Validator.isJson(payload)) {
-            parser = new JsonParser();
-            builder = new XmlBuilder();
-        }
+        this.parserFactory = parserFactory;
+        this.builderFactory = builderFactory;
+    }
 
-        parser.payload = this.payload;
+    public String convert(String payload)
+    {
+        Parser parser = parserFactory.getParser(payload);
+        Builder builder = builderFactory.getBuilder(payload);
+
+        parser.setPayload(payload);
         parser.payloadToNodes();
 
-        builder.tree = parser.tree;
+        builder.setTree(parser.getTree());
         builder.buildTree();
 
-        this.result = builder.result;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-
-    public String getResult() {
-        return this.result;
+        return builder.getResult();
     }
 
 }
