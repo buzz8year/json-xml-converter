@@ -7,7 +7,7 @@ public class XmlBuilder extends Builder
 {
     public void buildTree()
     {
-        for (var node : this.tree)
+        for (Node node : this.tree)
             this.result += this.build(node);
 
         if (this.tree.size() > 1)

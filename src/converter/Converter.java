@@ -1,14 +1,19 @@
-package converter.converter;
+package converter;
 
 import converter.builder.BuilderFactory;
 import converter.parser.ParserFactory;
 import converter.builder.Builder;
 import converter.parser.Parser;
+import lombok.Getter;
 
-public class Converter implements ConvertStrategy
+@Getter
+public class Converter
 {
     private final ParserFactory parserFactory;
     private final BuilderFactory builderFactory;
+
+    private Parser parser;
+    private Builder builder;
 
     public Converter(ParserFactory parserFactory, BuilderFactory builderFactory)
     {
@@ -18,8 +23,8 @@ public class Converter implements ConvertStrategy
 
     public String convert(String payload)
     {
-        Parser parser = parserFactory.getParser(payload);
-        Builder builder = builderFactory.getBuilder(payload);
+        parser = parserFactory.getParser(payload);
+        builder = builderFactory.getBuilder(payload);
 
         parser.setPayload(payload);
         parser.payloadToNodes();
@@ -29,5 +34,4 @@ public class Converter implements ConvertStrategy
 
         return builder.getResult();
     }
-
 }

@@ -1,16 +1,16 @@
 package converter.parser.impl;
 
+import converter.parser.Parser;
+import converter.node.Node;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import converter.node.Node;
-import converter.parser.Parser;
 
 public class XmlParser extends Parser
 {
     public void payloadToNodes()
     {
-        for (var s : this.splitPayload(this.payload))
+        for (String s : splitPayload())
         {
             if (s.contains("</"))
             {
@@ -21,8 +21,8 @@ public class XmlParser extends Parser
             else if (s.contains("<"))
             {
                 Node node = new Node(s);
-                this.processElement(node);
-                this.setParent(node);
+                processElement(node);
+                setParent(node);
 
                 if (s.contains("/>"))
                     parents.pop();
@@ -31,19 +31,19 @@ public class XmlParser extends Parser
                 parents.peek().value = s;
         }
 
-        for (Node node : this.tree)
-            this.checkForArray(node);
+        for (Node node : tree)
+            checkForArray(node);
     }
 
     public void setParent(Node node)
     {
         if (parents.isEmpty())
-            this.tree.add(node);
+            tree.add(node);
         else {
             parents.peek().children.add(node);
             node.parent = parents.peek();
         }
-        this.parents.push(node);
+        parents.push(node);
     }
 
     public void processElement(Node node)
@@ -55,7 +55,7 @@ public class XmlParser extends Parser
             String s = m.group().replaceAll("\\s*=\\s*","=")
                     .replaceAll("[</>]","");
 
-            for (var part : s.split(" "))
+            for (String part : s.split(" "))
             {
                 if (!part.contains("="))
                     node.name = part;
@@ -94,7 +94,7 @@ public class XmlParser extends Parser
         node.children.forEach(this::checkForArray);
     }
 
-    public String[] splitPayload(String payload)
+    public String[] splitPayload()
     {
         return payload.replaceFirst("<\\?.*\\?>", "").split("(?<=>)|(?=<)");
     }

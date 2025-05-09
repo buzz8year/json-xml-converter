@@ -1,19 +1,20 @@
 package converter;
 
-import converter.builder.BuilderFactory;
-import converter.converter.Converter;
-import converter.file.FileReader;
-import converter.parser.ParserFactory;
+import java.io.IOException;
 
-import java.io.FileNotFoundException;
+import converter.parser.ParserFactory;
+import converter.builder.BuilderFactory;
+import converter.file.Reader;
 
 public class Main
 {
-    public static void main(String[] args) throws FileNotFoundException
+    public static void main(String[] args) throws IOException, InterruptedException
     {
         Converter converter = new Converter(new ParserFactory(), new BuilderFactory());
-        String result = converter.convert(FileReader.read("test.iml"));
+        String payload = Reader.read("test.json");
+        String result = converter.convert(payload);
 
+        //Github.searchTreeForNotFollowers(converter.getParser().getTree());
         System.out.println(result);
     }
 }
