@@ -1,1 +1,1 @@
-Java JSON ⇄ XML converter. No-library Java implementation, to see what it costs to parse json & xml. Personally using it in my own apps for its light weight.
+JSON ⇄ XML converter. No-library Java implementation, to see what it costs to parse Json & Xml. Parsing result (nodes) can be used to convert it to any data-structure. Personally using it in my own apps for its light weight.
